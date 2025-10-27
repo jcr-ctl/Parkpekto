@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Slot Interface</title>
+    <style>
+        <style>
+            .name {
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-size: 20px;
+            }
+            .name1 {
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                font-size: 25px;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: rgb(229, 231, 235);
+                border: 2px solid black;
+                padding: 10px;
+            }
+            .slots {
+                height: 150px;
+                background-color: rgb(74, 222, 128);
+                border: 2px solid rgb(21, 128, 61);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .slots img {
+                width: 50px;
+            }
+            .vacant { background-color: rgb(74, 222, 128); }
+            .occupied { background-color: rgb(255, 69, 69); }
+            .misaligned { background-color: rgb(255, 215, 0); }
+            @media (max-width: 768px) {
+                .grid {
+                    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                }
+            }
+            .container {
+                display:flex;
+                justify-content: center;
+                margin:auto;
+                align-items: center;
+                flex-direction: column;
+                margin-top: 150px;
+            }
+            .greenbox {
+                width: 50px;
+                background-color:  rgb(74, 222, 128);
+                height: 50px;
+                border: 2px solid rgb(21, 128, 61);
+                margin: auto;
+                margin-top: 10px;
+            }
+            .Legend {
+                font-size: 25px;
+                margin-top: 20px;
+                flex-direction: row;
+            }
+            
+            .BoxName {
+                font-size: 20px
+            }
+            .redbox {
+                width: 50px;
+                background-color: rgb(255, 69, 69);
+                height: 50px;
+                border: 2px solid rgb(21, 128, 61);
+                margin: auto;
+                margin-top: 10px;
+            }
+            .yellowbox {
+                width: 50px;
+                background-color: rgb(255, 215, 0);
+                height: 50px;
+                border: 2px solid rgb(21, 128, 61);
+                margin: auto;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="name1">
+                <span>
+                    PARKPEKTO: Decision based improvement on Indoor Parking efficiency through accuracy evaluation
+                </span>
+            </div>
+            <div class="name">
+                <span>PARKING SLOT INTERFACE</span>
+            </div>
+            <div class="grid">
+                <div id="slot1" class="slots"></div>
+                <div id="slot2" class="slots"></div>
+                <div id="slot3" class="slots"></div>
+            </div>
+            <div class="Legend">
+                <span>Legends</span>
+                
+            </div>
+            <div class="Green">
+                <div class="greenbox">
+    
+                </div>
+                <div class="BoxName">
+                    For Vacant
+                </div>
+            </div>
+            <div class="Green">
+                <div class="redbox">
+    
+                </div>
+                <div class="BoxName">
+                    For Occupied
+                </div>
+            </div>
+            <div class="Green">
+                <div class="yellowbox">
+    
+                </div>
+                <div class="BoxName">
+                    For Incorrect 
+                </div>
+            </div>
+        </div>
+    <script>
+        function updateSlotStatus(slotId, status) {
+            let slot = document.getElementById(slotId);
+            slot.classList.remove('vacant', 'occupied', 'misaligned');
+            if (status === 'vacant') {
+                slot.classList.add('vacant');
+            } else if (status === 'occupied') {
+                slot.classList.add('occupied');
+            } else if (status === 'misaligned') {
+                slot.classList.add('misaligned');
+            }
+        }
+        function fetchData() {
+            fetch('/led_status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data from Flask:', data);
+                    updateSlotStatus('slot1', data.slot1);
+                    updateSlotStatus('slot2', data.slot2);
+                    updateSlotStatus('slot3', data.slot3);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        fetchData();
+        setInterval(fetchData, 5000);
+    </script>
+</body>
+</html>
